@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Skill Tracker</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 0 20px; }
+    input { padding: 8px; border: 1px solid #ccc; border-radius: 6px; width: 70%; }
+    button { padding: 8px 16px; background: #3B8BD4; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+    .hapus { background: none; border: none; color: #E24B4A; cursor: pointer; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h2>Skill saya</h2>
+
+  <div style="display:flex; gap:8px; margin-bottom:20px;">
+    <input type="text" id="input-skill" placeholder="Tambah skill baru..." />
+    <button onclick="tambahSkill()">Tambah</button>
+  </div>
+
+  <ul id="list-skill"></ul>
+
+  <script>
+    const API = "http://127.0.0.1:5000"
+
+    // ambil semua skill dari API lalu tampilkan
+    async function getSkills() {
+      const res = await fetch(`${API}/skills`)
+      const data = await res.json()
+
+      const list = document.getElementById("list-skill")
+      list.innerHTML = ""
+
+      data.forEach(skill => {
+        list.innerHTML += `
+          <li>
+            ${skill.nama}
+            <button class="hapus" onclick="hapusSkill(${skill.id})">hapus</button>
+          </li>
+        `
+      })
+    }
+
+    // kirim POST ke API buat tambah skill baru
+    async function tambahSkill() {
+      const input = document.getElementById("input-skill")
+      if (!input.value) return
+
+      await fetch(`${API}/skills`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nama: input.value })
+      })
+
+      input.value = ""
+      getSkills()
+    }
+
+    // kirim DELETE ke API
+    async function hapusSkill(id) {
+      await fetch(`${API}/skills/${id}`, { method: "DELETE" })
+      getSkills()
+    }
+
+    // jalanin pas halaman pertama dibuka
+    getSkills()
+  </script>
+</body>
+</html>
