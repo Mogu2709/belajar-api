@@ -5,6 +5,7 @@ import os
 
 app = Flask(__name__)
 CORS(app)
+
 DB_PATH = os.environ.get("DATABASE_URL", "/tmp/skills.db")
 
 
@@ -26,6 +27,10 @@ def init_db():
     )
     conn.commit()
     conn.close()
+
+
+# Panggil di sini — bukan di dalam if __name__
+init_db()
 
 
 @app.route("/skills", methods=["GET"])
@@ -59,6 +64,5 @@ def delete_skill(id):
 
 
 if __name__ == "__main__":
-    init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
