@@ -5,10 +5,11 @@ import os
 
 app = Flask(__name__)
 CORS(app)
+DB_PATH = os.environ.get("DATABASE_URL", "/tmp/skills.db")
 
 
 def get_db():
-    conn = sqlite3.connect("skills.db")
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
